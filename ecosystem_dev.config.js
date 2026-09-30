@@ -13,6 +13,7 @@ module.exports = {
             env: {
                 NODE_ENV: "staging",
                 PORT: 8085,
+                COOKIE_SECURE: "false", // served over plain HTTP; remove once behind HTTPS
             },
         },
     ],

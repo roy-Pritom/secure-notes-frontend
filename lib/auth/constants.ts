@@ -7,10 +7,17 @@ export const USER_COOKIE = "sn_user";
 const ACCESS_MAX_AGE = 15 * 60;
 const REFRESH_MAX_AGE = 7 * 24 * 60 * 60;
 
+// Browsers drop Secure cookies on plain-HTTP origins (except localhost).
+// Set COOKIE_SECURE=false only when serving over HTTP, e.g. a bare-IP staging box.
+const secure =
+  process.env.COOKIE_SECURE !== undefined
+    ? process.env.COOKIE_SECURE === "true"
+    : process.env.NODE_ENV === "production";
+
 const shared = {
   path: "/",
   sameSite: "lax",
-  secure: process.env.NODE_ENV === "production",
+  secure,
 } as const;
 
 export const accessCookieOptions = { ...shared, httpOnly: true, maxAge: ACCESS_MAX_AGE };
