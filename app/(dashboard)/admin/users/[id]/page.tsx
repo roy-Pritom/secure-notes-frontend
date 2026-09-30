@@ -4,7 +4,6 @@ import { countAdmins } from "@/lib/api/admin";
 import { fetchOr404 } from "@/lib/api/fetch-or-404";
 import { backend } from "@/lib/api/server";
 import { loadUserPosts } from "@/lib/api/user-posts";
-import { requireAdmin } from "@/lib/auth/session";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,10 +15,10 @@ import { EditUserForm } from "@/components/users/edit-user-form";
 
 export default async function UserDetailPage({ params, searchParams }: PageProps<"/admin/users/[id]">) {
   const { id } = await params;
-  const [viewer, user] = await Promise.all([requireAdmin(), fetchOr404(id, backend.users.get)]);
+  const user = await fetchOr404(id, backend.users.get);
   const [adminCount, { posts, searchTerm }] = await Promise.all([
     countAdmins(),
-    loadUserPosts(id, await searchParams, { viewer, pathname: `/admin/users/${id}`, limit: 5 }),
+    loadUserPosts(id, await searchParams, { pathname: `/admin/users/${id}`, limit: 5 }),
   ]);
 
   return (

@@ -5,7 +5,6 @@ import { UserAvatar } from "@/components/shared/user-avatar"
 
 interface AuthorHeaderProps {
   author: PostAuthor
-  // Omit when the list was filtered client-side — the server count would disagree with it.
   total?: number
   filtered?: boolean
   actions?: ReactNode

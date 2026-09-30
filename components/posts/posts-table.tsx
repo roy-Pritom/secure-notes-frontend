@@ -87,7 +87,7 @@ export function PostsTable({ posts, searchTerm, emptyMessage = "No posts yet." }
       emptyMessage={searchTerm ? `Nothing matches “${searchTerm}”.` : emptyMessage}
       toolbar={
         <>
-          {/* Matched literally, not as a regex. */}
+          {/* Matches whole words and word starts, not arbitrary substrings. */}
           <DataTableSearch placeholder="Search titles, bodies and tags…" />
           <DataTableReset keys={["search"]} />
         </>

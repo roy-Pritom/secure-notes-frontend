@@ -3,10 +3,9 @@ import { redirect } from "next/navigation";
 import { param, postParams, type SearchParams } from "@/lib/search-params";
 import { fetchOr404 } from "./fetch-or-404";
 import { backend } from "./server";
-import type { SessionUser, UserPosts } from "./types";
+import type { UserPosts } from "./types";
 
 interface LoadOptions {
-  viewer: SessionUser;
   // Where to send a reader who paged past the end.
   pathname: string;
   limit?: number;
@@ -15,13 +14,12 @@ interface LoadOptions {
 export interface LoadedUserPosts {
   posts: UserPosts;
   searchTerm?: string;
-  canSeeDrafts: boolean;
 }
 
 export async function loadUserPosts(
   id: string,
   searchParams: SearchParams,
-  { viewer, pathname, limit }: LoadOptions,
+  { pathname, limit }: LoadOptions,
 ): Promise<LoadedUserPosts> {
   const query = postParams(searchParams, limit);
   const posts = await fetchOr404(id, (authorId) => backend.users.posts(authorId, query));
@@ -39,12 +37,7 @@ export async function loadUserPosts(
     redirect(qs ? `${pathname}?${qs}` : pathname);
   }
 
-  // The $lookup returns drafts to every caller. Filtering here keeps draft bodies
-  // out of the RSC payload, but meta.total still counts them.
-  const canSeeDrafts = viewer.id === posts.author.id || viewer.roles.includes("admin");
-  const visible = canSeeDrafts
-    ? posts
-    : { ...posts, items: posts.items.filter((post) => post.status === "published") };
-
-  return { posts: visible, searchTerm: query.searchTerm, canSeeDrafts };
+  // Drafts need no filtering here: the API only returns them to their author and
+  // admins, and leaves them out of meta.total for everyone else.
+  return { posts, searchTerm: query.searchTerm };
 }

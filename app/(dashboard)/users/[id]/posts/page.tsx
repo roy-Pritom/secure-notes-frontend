@@ -14,8 +14,7 @@ export const metadata: Metadata = { title: "Posts" };
 export default async function UserPostsPage({ params, searchParams }: PageProps<"/users/[id]/posts">) {
   const { id } = await params;
   const viewer = await requireUser();
-  const { posts, searchTerm, canSeeDrafts } = await loadUserPosts(id, await searchParams, {
-    viewer,
+  const { posts, searchTerm } = await loadUserPosts(id, await searchParams, {
     pathname: `/users/${id}/posts`,
   });
   const isAuthor = viewer.id === posts.author.id;
@@ -32,7 +31,7 @@ export default async function UserPostsPage({ params, searchParams }: PageProps<
       )}
       <AuthorHeader
         author={posts.author}
-        total={canSeeDrafts ? posts.meta.total : undefined}
+        total={posts.meta.total}
         filtered={Boolean(searchTerm)}
         actions={isAuthor && <PostFormDialog />}
       />

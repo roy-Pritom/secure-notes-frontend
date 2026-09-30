@@ -13,7 +13,6 @@ export const metadata: Metadata = { title: "My posts" };
 export default async function PostsPage({ searchParams }: PageProps<"/posts">) {
   const user = await requireUser();
   const { posts, searchTerm } = await loadUserPosts(user.id, await searchParams, {
-    viewer: user,
     pathname: "/posts",
   });
 
