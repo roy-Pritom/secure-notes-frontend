@@ -87,10 +87,15 @@ export interface InterestGroup {
   users: UserSummary[];
 }
 
+/** The author projection the $lookup emits — four fields, nothing more. */
+export type PostAuthor = UserSummary;
+
+/** A row from GET /users/:id/posts. The author lives on the envelope, not the row. */
 export type AuthoredPost = Omit<Post, "author">;
 
+/** Deliberately not Paginated<AuthoredPost>: the author sits beside the page. */
 export interface UserPosts {
-  author: UserSummary;
+  author: PostAuthor;
   items: AuthoredPost[];
   meta: PaginationMeta;
 }
@@ -153,6 +158,9 @@ export interface ListQuery {
   sortOrder?: SortOrder;
   searchTerm?: string;
 }
+
+// No sortOrder: the backend accepts it here but always returns newest-first.
+export type UserPostsQuery = Omit<ListQuery, "sortOrder">;
 
 export interface NoteQuery extends ListQuery {
   tag?: string;

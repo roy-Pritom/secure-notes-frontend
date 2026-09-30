@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { MoreHorizontalIcon, PencilIcon, Trash2Icon } from "lucide-react"
+import { MoreHorizontalIcon, NewspaperIcon, PencilIcon, Trash2Icon } from "lucide-react"
 import type { User } from "@/lib/api/types"
 import { formatDate, formatDateTime } from "@/lib/format"
 import { Button } from "@/components/ui/button"
@@ -39,6 +39,12 @@ function UserActions({ user, adminCount }: { user: User; adminCount: number }) {
             <Link href={`/admin/users/${user.id}`}>
               <PencilIcon />
               View & edit
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href={`/users/${user.id}/posts`}>
+              <NewspaperIcon />
+              View posts
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

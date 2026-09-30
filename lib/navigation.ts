@@ -40,6 +40,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { title: "Overview", href: "/admin", icon: LayoutDashboardIcon },
       { title: "Users", href: "/admin/users", icon: UsersIcon },
       { title: "All notes", href: "/admin/notes", icon: FileTextIcon },
+      { title: "Posts", href: "/admin/posts", icon: NewspaperIcon },
       { title: "Interests", href: "/admin/interests", icon: SparklesIcon },
       { title: "System health", href: "/admin/health", icon: HeartPulseIcon },
     ],

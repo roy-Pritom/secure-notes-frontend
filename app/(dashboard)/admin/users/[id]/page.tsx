@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, ExternalLinkIcon } from "lucide-react";
 import { countAdmins } from "@/lib/api/admin";
 import { fetchOr404 } from "@/lib/api/fetch-or-404";
 import { backend } from "@/lib/api/server";
+import { loadUserPosts } from "@/lib/api/user-posts";
+import { requireAdmin } from "@/lib/auth/session";
 import { formatDate, formatDateTime } from "@/lib/format";
-import { listParams } from "@/lib/search-params";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PostsTable } from "@/components/posts/posts-table";
@@ -15,10 +16,10 @@ import { EditUserForm } from "@/components/users/edit-user-form";
 
 export default async function UserDetailPage({ params, searchParams }: PageProps<"/admin/users/[id]">) {
   const { id } = await params;
-  const user = await fetchOr404(id, backend.users.get);
-  const [adminCount, posts] = await Promise.all([
+  const [viewer, user] = await Promise.all([requireAdmin(), fetchOr404(id, backend.users.get)]);
+  const [adminCount, { posts, searchTerm }] = await Promise.all([
     countAdmins(),
-    backend.users.posts(id, listParams(await searchParams, 5)),
+    loadUserPosts(id, await searchParams, { viewer, pathname: `/admin/users/${id}`, limit: 5 }),
   ]);
 
   return (
@@ -72,11 +73,19 @@ export default async function UserDetailPage({ params, searchParams }: PageProps
       </div>
 
       <section className="space-y-4">
-        <div>
-          <h2 className="text-lg font-semibold">Posts</h2>
-          <p className="text-sm text-muted-foreground">Everything {user.firstName} has written.</p>
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold">Posts</h2>
+            <p className="text-sm text-muted-foreground">Everything {user.firstName} has written.</p>
+          </div>
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`/users/${user.id}/posts`}>
+              <ExternalLinkIcon />
+              Public page
+            </Link>
+          </Button>
         </div>
-        <PostsTable posts={posts} />
+        <PostsTable posts={posts} searchTerm={searchTerm} />
       </section>
     </div>
   );

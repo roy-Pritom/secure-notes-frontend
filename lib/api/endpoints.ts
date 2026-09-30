@@ -15,6 +15,7 @@ import type {
   UpdateProfileBody,
   User,
   UserPosts,
+  UserPostsQuery,
 } from "./types";
 
 export type HttpMethod = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
@@ -54,7 +55,7 @@ export function createEndpoints(request: Requester) {
         request<void>(`/users/${id}`, { method: "DELETE", admin: true }),
       interests: (query: InterestQuery = {}) =>
         request<Paginated<InterestGroup>>("/users/interests", { query, admin: true }),
-      posts: (id: string, query: ListQuery = {}) =>
+      posts: (id: string, query: UserPostsQuery = {}) =>
         request<UserPosts>(`/users/${id}/posts`, { query }),
     },
     profile: {

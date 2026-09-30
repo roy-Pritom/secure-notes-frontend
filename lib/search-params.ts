@@ -26,6 +26,11 @@ export function listParams(params: SearchParams, defaultLimit = 10) {
   };
 }
 
+export function postParams(params: SearchParams, defaultLimit = 10) {
+  const { page, limit, searchTerm } = listParams(params, defaultLimit);
+  return { page, limit, searchTerm };
+}
+
 export function noteParams(params: SearchParams) {
   return {
     ...listParams(params),

@@ -12,7 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { columnHelper, DataTable, DataTableReset, DataTableSearch, DataTableSortHeader } from "@/components/data-table"
+import { columnHelper, DataTable, DataTableReset, DataTableSearch } from "@/components/data-table"
 import { StatusBadge, TagList } from "@/components/shared/badges"
 
 const helper = columnHelper<AuthoredPost>()
@@ -29,8 +29,9 @@ const columns = helper.columns([
   }),
   helper.accessor("tags", { header: "Tags", cell: ({ getValue }) => <TagList tags={getValue()} /> }),
   helper.accessor("status", { header: "Status", cell: ({ getValue }) => <StatusBadge status={getValue()} /> }),
+  // Always newest-first: the backend ignores sortOrder on this route, so no toggle.
   helper.accessor("createdAt", {
-    header: () => <DataTableSortHeader title="Created" />,
+    header: "Created",
     cell: ({ getValue }) => <span className="whitespace-nowrap text-muted-foreground">{formatDate(getValue())}</span>,
   }),
   helper.display({
@@ -69,18 +70,26 @@ function PostSheet({ post }: { post: AuthoredPost }) {
   )
 }
 
-export function PostsTable({ posts }: { posts: UserPosts }) {
+interface PostsTableProps {
+  posts: UserPosts
+  searchTerm?: string
+  emptyMessage?: string
+}
+
+export function PostsTable({ posts, searchTerm, emptyMessage = "No posts yet." }: PostsTableProps) {
   return (
     <DataTable
       columns={columns}
       data={posts.items}
       meta={posts.meta}
       getRowId={(post) => post.id}
-      emptyMessage="No posts yet."
+      // The same empty page comes back for "nothing written" and "nothing matched".
+      emptyMessage={searchTerm ? `Nothing matches “${searchTerm}”.` : emptyMessage}
       toolbar={
         <>
-          <DataTableSearch placeholder="Search posts…" />
-          <DataTableReset keys={["search", "sortOrder"]} />
+          {/* Matched literally, not as a regex. */}
+          <DataTableSearch placeholder="Search titles, bodies and tags…" />
+          <DataTableReset keys={["search"]} />
         </>
       }
     />
