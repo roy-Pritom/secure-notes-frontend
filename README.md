@@ -7,8 +7,8 @@ See `doc/FRONTEND_INTEGRATION.md` for the API contract.
 
 ```bash
 cp .env.example .env.local   # API_BASE_URL=http://localhost:8000/api/v1
-npm install
-npm run dev                  # http://localhost:3000
+pnpm install
+pnpm dev                      # http://localhost:3000
 ```
 
 The API must run on port 8000 with `CORS_ORIGINS=http://localhost:3000`.
